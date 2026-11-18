@@ -599,7 +599,7 @@
     content:'';position:absolute;inset:10px;border:1px solid rgba(244,221,162,.22);
     border-radius:11px;z-index:3;pointer-events:none;
   }
-  .hero-frame img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;filter:saturate(.96) contrast(1.02)}
+  .hero-frame img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;display:block;filter:saturate(.96) contrast(1.02)}
   .hero-frame::after{
     content:'';position:absolute;inset:0;
     background:linear-gradient(150deg,rgba(4,10,20,0) 40%,rgba(4,10,20,.35) 85%);
@@ -616,7 +616,7 @@
     border:1px solid rgba(244,221,162,.4);transform:rotate(-8deg);
     box-shadow:0 26px 46px -18px rgba(0,0,0,.9);z-index:-1;
   }
-  .hero-mini img{width:100%;aspect-ratio:1;object-fit:cover;display:block;filter:saturate(.9)}
+  .hero-mini img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;display:block;filter:saturate(.9)}
   .hero-mini::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(4,10,20,.45))}
   .float-chip{
     position:absolute;display:flex;align-items:center;gap:8px;padding:9px 14px;
@@ -1842,6 +1842,7 @@
     document.documentElement.classList.add('no-webgl');
   }
 </script>
+<script src="js/nav.js" defer></script>
 <script src="js/gallery.js" defer></script>
 <script src="js/liha-api.js" defer></script>
 </body>
