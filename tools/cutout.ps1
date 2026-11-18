@@ -6,29 +6,43 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-public class LogoCut
+public class LogoKey
 {
-    public static string Process(string src, string dst, int cropH)
+    // Warm, low-saturation, light pixels are the paper backdrop.
+    static bool IsPaper(int r, int g, int b)
+    {
+        int mx = Math.Max(r, Math.Max(g, b));
+        int mn = Math.Min(r, Math.Min(g, b));
+        int sat = mx - mn;
+        int lum = (r + g + b) / 3;
+        return sat < 58 && r >= g && g >= b && lum > 58;
+    }
+
+    // Bright neutral highlights (cotton boll, specular) must stay.
+    static bool IsWhite(int r, int g, int b)
+    {
+        int mx = Math.Max(r, Math.Max(g, b));
+        int mn = Math.Min(r, Math.Min(g, b));
+        return (mx - mn) < 21 && ((r + g + b) / 3) > 205;
+    }
+
+    public static string Process(string src, string dst, int outSize)
     {
         using (var bmp = new Bitmap(src))
         {
-            int W = bmp.Width;
-            int H = Math.Min(cropH, bmp.Height);
-
-            using (var crop = new Bitmap(W, H, PixelFormat.Format32bppArgb))
+            int W = bmp.Width, H = bmp.Height;
+            using (var work = new Bitmap(W, H, PixelFormat.Format32bppArgb))
             {
-                using (var g = Graphics.FromImage(crop))
-                {
-                    g.DrawImage(bmp, new Rectangle(0, 0, W, H), new Rectangle(0, 0, W, H), GraphicsUnit.Pixel);
-                }
+                using (var g = Graphics.FromImage(work))
+                    g.DrawImage(bmp, new Rectangle(0, 0, W, H));
 
                 var rect = new Rectangle(0, 0, W, H);
-                var data = crop.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+                var data = work.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
                 int stride = data.Stride;
                 byte[] buf = new byte[stride * H];
                 Marshal.Copy(data.Scan0, buf, 0, buf.Length);
 
-                int removed = 0;
+                int removed = 0, kept = 0;
                 for (int y = 0; y < H; y++)
                 {
                     int row = y * stride;
@@ -36,21 +50,13 @@ public class LogoCut
                     {
                         int i = row + x * 4;
                         byte b = buf[i], gg = buf[i + 1], r = buf[i + 2];
-                        int mx = Math.Max(r, Math.Max(gg, b));
-                        int mn = Math.Min(r, Math.Min(gg, b));
-                        int sat = mx - mn;
-                        int lum = (r + gg + b) / 3;
 
-                        // warm, low-saturation and light => paper background
-                        if (sat < 58 && r >= gg && gg >= b && lum > 58)
-                        {
-                            buf[i + 3] = 0;
-                            removed++;
-                        }
+                        if (IsPaper(r, gg, b)) { buf[i + 3] = 0; removed++; }
+                        else if (IsWhite(r, gg, b)) { buf[i + 3] = 255; kept++; }
                     }
                 }
 
-                // feather the alpha edge (3x3 box blur on alpha only)
+                // soften only the keyed edge, leaving solid interiors untouched
                 byte[] alpha = new byte[W * H];
                 for (int y = 0; y < H; y++)
                     for (int x = 0; x < W; x++)
@@ -61,6 +67,8 @@ public class LogoCut
                 {
                     for (int x = 0; x < W; x++)
                     {
+                        int a = alpha[y * W + x];
+                        if (a == 255) { soft[y * W + x] = 255; continue; }
                         int sum = 0, count = 0;
                         for (int dy = -1; dy <= 1; dy++)
                         {
@@ -70,14 +78,12 @@ public class LogoCut
                             {
                                 int nx = x + dx;
                                 if (nx < 0 || nx >= W) continue;
-                                int w = (dx == 0 && dy == 0) ? 4 : 1;
+                                int w = (dx == 0 && dy == 0) ? 3 : 1;
                                 sum += alpha[ny * W + nx] * w;
                                 count += w;
                             }
                         }
-                        byte v = (byte)(sum / count);
-                        // keep solid interiors fully opaque
-                        soft[y * W + x] = alpha[y * W + x] == 255 && v > 235 ? (byte)255 : v;
+                        soft[y * W + x] = (byte)(sum / count);
                     }
                 }
 
@@ -86,35 +92,23 @@ public class LogoCut
                         buf[y * stride + x * 4 + 3] = soft[y * W + x];
 
                 Marshal.Copy(buf, 0, data.Scan0, buf.Length);
-                crop.UnlockBits(data);
+                work.UnlockBits(data);
 
-                // trim transparent margins
-                int minX = W, minY = H, maxX = -1, maxY = -1;
-                for (int y = 0; y < H; y++)
+                // full artwork, no crop: scale the square down for the web
+                using (var output = new Bitmap(outSize, outSize, PixelFormat.Format32bppArgb))
                 {
-                    for (int x = 0; x < W; x++)
+                    using (var g2 = Graphics.FromImage(output))
                     {
-                        if (soft[y * W + x] > 10)
-                        {
-                            if (x < minX) minX = x;
-                            if (x > maxX) maxX = x;
-                            if (y < minY) minY = y;
-                            if (y > maxY) maxY = y;
-                        }
+                        g2.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                        g2.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        g2.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                        g2.Clear(Color.Transparent);
+                        g2.DrawImage(work, new Rectangle(0, 0, outSize, outSize), 0, 0, W, H, GraphicsUnit.Pixel);
                     }
-                }
-                if (maxX < 0) { minX = 0; minY = 0; maxX = W - 1; maxY = H - 1; }
-
-                int pad = 10;
-                minX = Math.Max(0, minX - pad); minY = Math.Max(0, minY - pad);
-                maxX = Math.Min(W - 1, maxX + pad); maxY = Math.Min(H - 1, maxY + pad);
-
-                var outRect = new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
-                using (var output = crop.Clone(outRect, PixelFormat.Format32bppArgb))
-                {
-                    output.Save(dst, ImageFormat.Png);
-                    double pct = (double)removed / (W * H) * 100.0;
-                    return string.Format("saved {0}x{1} ({2:F1}% keyed)", output.Width, output.Height, pct);
+                    var tmp = dst + ".tmp.png";
+                    output.Save(tmp, ImageFormat.Png);
+                    return string.Format("{0}x{1} -> {2}px, keyed {3:F1}%, whiteness kept {4}",
+                        W, H, outSize, (double)removed / (W * H) * 100.0, kept);
                 }
             }
         }
@@ -124,9 +118,10 @@ public class LogoCut
 
 Add-Type -TypeDefinition $code -ReferencedAssemblies System.Drawing
 
-$src = 'C:\Users\rampr\liha-tex\frontend\assets\liha-logo-source.png'
+$src = 'C:\Users\rampr\Downloads\376508dd-ac11-419a-833b-af7ee2bc329b.png'
 $dst = 'C:\Users\rampr\liha-tex\frontend\assets\liha-logo.png'
 
-$result = [LogoCut]::Process($src, $dst, 920)
-Write-Output $result
+$tmp = "$dst.tmp.png"
+[LogoKey]::Process($src, $dst, 700) | Write-Output
+Move-Item $tmp $dst -Force
 Get-Item $dst | Select-Object Name, Length | Format-Table -AutoSize
