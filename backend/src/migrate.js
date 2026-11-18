@@ -1,4 +1,3 @@
-import { fileURLToPath } from 'node:url';
 import { pool, migrate } from './db.js';
 
 try {

@@ -19,7 +19,7 @@ export const store = {
   phones: ['+91 95244 63580', '+91 99766 83036'],
   mapsQuery: 'Liha Tex Tirupur Tamil Nadu',
   onlineStore: 'coming-soon',
-  hours: TZ,
+  timezone: TZ,
 };
 
 function istParts(now) {

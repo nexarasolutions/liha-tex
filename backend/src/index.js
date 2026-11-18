@@ -80,7 +80,8 @@ app.get('/api/health', async (_req, res) => {
       uptimeSec: Math.round(process.uptime()),
     });
   } catch (err) {
-    res.status(503).json({ ok: false, db: 'down', error: err.message });
+    // Stay "healthy" for Render even while the database is waking up.
+    res.json({ ok: true, db: 'down', error: err.message, uptimeSec: Math.round(process.uptime()) });
   }
 });
 

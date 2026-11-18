@@ -92,19 +92,20 @@ and stored with parameterised SQL.
 
 ## Replacing product photos
 
-Drop real photos into `frontend/assets/` with these exact names (JPEG, roughly
-4:5 portrait for cards, ≥1200 px wide):
+Drop real photos into `frontend/assets/`. Each category takes a set of up to
+three images and the card rotates through them with a left → right slide:
 
-| File | Used for |
-| ---- | -------- |
-| `banians.jpg` | Hero card + Men's Banians |
-| `drawers.jpg` | Drawers & Trunks |
-| `baby.jpg` | Baby Innerwear |
-| `cotton.jpg` | Cotton fabrics / wholesale + hero inset |
-| `kids.jpg` | Optional — kids range |
+| Category | Files |
+| -------- | ----- |
+| Men's banians | `banians-1.jpg`, `banians-2.jpg`, `banians-3.jpg` |
+| Drawers & trunks | `drawers-1.jpg`, `drawers-2.jpg`, `drawers-3.jpg` |
+| Baby innerwear | `baby-1.jpg`, `baby-2.jpg`, `baby-3.jpg` |
+| Cotton / wholesale | `cotton-1.jpg`, `cotton-2.jpg`, `cotton-3.jpg` |
 
-If a file is missing, the card falls back to an existing photo, so the layout
-never breaks.
+`banians-1`, `drawers-1`, `baby-1` and `cotton-1` also feed the scrolling rail
+under the section heading and the hero card. Missing slides are skipped, and the
+`-1` slot falls back to an existing photo, so the layout never breaks. Use JPEG,
+roughly 4:5 portrait, at least 800 px wide.
 
 ## Contact
 

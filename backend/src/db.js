@@ -9,15 +9,14 @@ const connectionString =
   'postgresql://postgres:postgres@localhost:5432/liha_tex';
 
 const isLocal = /@(localhost|127\.0\.0\.1)[:/]/.test(connectionString);
-const hasSslMode = /[?&]sslmode=/.test(connectionString);
 
 export const pool = new Pool({
   connectionString,
   max: Number(process.env.PG_POOL_MAX || 5),
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 10_000,
-  // Neon/Render Postgres present a managed certificate; require TLS there.
-  ssl: hasSslMode || isLocal ? undefined : { rejectUnauthorized: false },
+  // Neon and Render Postgres both serve TLS with managed certificates.
+  ssl: isLocal ? undefined : { rejectUnauthorized: false },
 });
 
 pool.on('error', (err) => {
