@@ -670,8 +670,38 @@
   @media (max-width:1080px){.product-visual{height:290px}}
   @media (max-width:560px){.product-visual{height:250px}}
 
-  /* ---------- 3D scroll reveals ---------- */
-  .reveal{
+  /* ---------- category photo sets: left → right motion ---------- */
+  .product-visual .shots{position:absolute;inset:0;overflow:hidden;z-index:0}
+  .product-visual .shot{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    opacity:0;transform:translateX(-12%) scale(1.1);filter:saturate(.98) contrast(1.03);
+    transition:opacity 1.1s var(--ease),transform 2.2s var(--ease);
+    will-change:opacity,transform;
+  }
+  .product-visual .shot.on{opacity:1;transform:translateX(0) scale(1)}
+  .product:hover .product-visual .shot.on{transform:scale(1.045)}
+  .shot-dots{position:absolute;left:16px;bottom:15px;z-index:4;display:flex;gap:6px}
+  .shot-dots i{width:13px;height:2px;background:rgba(248,241,228,.28);transition:background .4s,width .4s}
+  .shot-dots i.on{width:24px;background:var(--gold-bright)}
+
+  /* continuous category rail */
+  .photo-rail{
+    overflow:hidden;margin:30px 0 10px;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  }
+  .photo-rail-track{display:flex;gap:14px;width:max-content;animation:railMove 42s linear infinite reverse}
+  .photo-rail img{
+    height:clamp(96px,13vw,138px);width:auto;aspect-ratio:3/4;object-fit:cover;border-radius:10px;
+    border:1px solid rgba(217,178,95,.26);box-shadow:0 18px 32px -22px #000;filter:saturate(.93);
+    transition:transform .6s var(--ease),border-color .6s;
+  }
+  .photo-rail img:hover{transform:translateY(-5px) scale(1.03);border-color:rgba(244,221,162,.6)}
+  @keyframes railMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){.photo-rail-track{animation:none}.product-visual .shot{transition:none}}
+
+
+  /* ---------- 3D scroll reveals ---------- */  .reveal{
     opacity:0;transform:perspective(1000px) translateY(38px) rotateX(6deg) scale(.985);
     transform-origin:50% 0%;transition:opacity 1.05s var(--ease),transform 1.05s var(--ease);
     transition-delay:var(--d,0s);will-change:opacity,transform;
@@ -900,7 +930,7 @@
         <span class="float-chip chip-a"><span class="dot"></span>100% combed cotton</span>
         <span class="float-chip chip-b">Knitted in Tirupur</span>
         <div class="hero-frame" data-tilt data-tilt-strength="9">
-          <img src="assets/banians.jpg" width="900" height="1125" alt="Folded stacks of Liha Tex cotton banians"
+          <img src="assets/banians-1.jpg" width="900" height="1125" alt="Folded stacks of Liha Tex cotton banians"
                onerror="this.onerror=null;this.src='assets/folded.jpg'" />
           <span class="shine"></span>
         </div>
@@ -941,14 +971,36 @@
         </p>
       </div>
 
+      <div class="photo-rail reveal" aria-label="Photo gallery of Liha Tex products">
+        <div class="photo-rail-track">
+          <img src="assets/banians-1.jpg" alt="Liha Tex banians" loading="lazy" onerror="this.onerror=null;this.src='assets/folded.jpg'" />
+          <img src="assets/cotton-1.jpg" alt="Cotton fabric rolls" loading="lazy" onerror="this.onerror=null;this.src='assets/cotton.jpg'" />
+          <img src="assets/baby-1.jpg" alt="Baby innerwear" loading="lazy" onerror="this.onerror=null;this.src='assets/baby.jpg'" />
+          <img src="assets/drawers-1.jpg" alt="Drawers and trunks" loading="lazy" onerror="this.onerror=null;this.src='assets/folded.jpg'" />
+          <img src="assets/banians-2.jpg" alt="Banians packed for wholesale" loading="lazy" onerror="this.onerror=null;this.src='assets/cotton.jpg'" />
+          <img src="assets/baby-2.jpg" alt="Baby knitwear set" loading="lazy" onerror="this.onerror=null;this.src='assets/baby.jpg'" />
+          <img src="assets/banians-1.jpg" alt="" loading="lazy" aria-hidden="true" onerror="this.onerror=null;this.src='assets/folded.jpg'" />
+          <img src="assets/cotton-1.jpg" alt="" loading="lazy" aria-hidden="true" onerror="this.onerror=null;this.src='assets/cotton.jpg'" />
+          <img src="assets/baby-1.jpg" alt="" loading="lazy" aria-hidden="true" onerror="this.onerror=null;this.src='assets/baby.jpg'" />
+          <img src="assets/drawers-1.jpg" alt="" loading="lazy" aria-hidden="true" onerror="this.onerror=null;this.src='assets/folded.jpg'" />
+          <img src="assets/banians-2.jpg" alt="" loading="lazy" aria-hidden="true" onerror="this.onerror=null;this.src='assets/cotton.jpg'" />
+          <img src="assets/baby-2.jpg" alt="" loading="lazy" aria-hidden="true" onerror="this.onerror=null;this.src='assets/baby.jpg'" />
+        </div>
+      </div>
+
       <div class="collection-grid">
         <!-- Product 1 -->
         <article class="product reveal" data-tilt style="--d:.05s">
           <div class="product-visual" style="--c1:#123058;--c2:#050e1c">
             <span class="ribs"></span><span class="fold"></span><span class="shade"></span>
-            <img src="assets/banians.jpg" width="800" height="900" loading="lazy" alt="Folded stacks of Liha Tex men's cotton banians"
-                 onerror="this.onerror=null;this.src='assets/folded.jpg'" />
+            <div class="shots" data-shots>
+              <img class="shot on" src="assets/banians-1.jpg" width="800" height="900" loading="lazy" alt="Folded stacks of Liha Tex men's cotton banians"
+                   onerror="this.onerror=null;this.src='assets/folded.jpg'" />
+              <img class="shot" src="assets/banians-2.jpg" width="800" height="900" loading="lazy" alt="Liha Tex banians packed for wholesale" onerror="this.remove()" />
+              <img class="shot" src="assets/banians-3.jpg" width="800" height="900" loading="lazy" alt="Combed cotton banians in white and colours" onerror="this.remove()" />
+            </div>
             <span class="scrim"></span>
+            <span class="shot-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></span>
             <span class="tag">Men · Everyday</span>
             <span class="garment">
               <svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
@@ -973,9 +1025,14 @@
         <article class="product reveal" data-tilt style="--d:.12s">
           <div class="product-visual" style="--c1:#5a2438;--c2:#1b0910">
             <span class="ribs"></span><span class="fold"></span><span class="shade"></span>
-            <img src="assets/drawers.jpg" width="800" height="900" loading="lazy" alt="Packed Liha Tex cotton drawers and trunks ready for dispatch"
-                 onerror="this.onerror=null;this.src='assets/folded.jpg'" />
+            <div class="shots" data-shots>
+              <img class="shot on" src="assets/drawers-1.jpg" width="800" height="900" loading="lazy" alt="Packed Liha Tex cotton drawers and trunks ready for dispatch"
+                   onerror="this.onerror=null;this.src='assets/folded.jpg'" />
+              <img class="shot" src="assets/drawers-2.jpg" width="800" height="900" loading="lazy" alt="Liha Tex drawers in assorted colours" onerror="this.remove()" />
+              <img class="shot" src="assets/drawers-3.jpg" width="800" height="900" loading="lazy" alt="Cartons of drawers ready for wholesale" onerror="this.remove()" />
+            </div>
             <span class="scrim"></span>
+            <span class="shot-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></span>
             <span class="tag">Men · Comfort</span>
             <span class="garment">
               <svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
@@ -1000,9 +1057,14 @@
         <article class="product reveal" data-tilt style="--d:.19s">
           <div class="product-visual" style="--c1:#1d4f52;--c2:#071a1c">
             <span class="ribs"></span><span class="fold"></span><span class="shade"></span>
-            <img src="assets/baby.jpg" width="800" height="900" loading="lazy" alt="Soft cotton baby innerwear from Liha Tex"
-                 onerror="this.onerror=null;this.src='assets/baby.jpg'" />
+            <div class="shots" data-shots>
+              <img class="shot on" src="assets/baby-1.jpg" width="800" height="900" loading="lazy" alt="Soft cotton baby innerwear from Liha Tex"
+                   onerror="this.onerror=null;this.src='assets/baby.jpg'" />
+              <img class="shot" src="assets/baby-2.jpg" width="800" height="900" loading="lazy" alt="Liha Tex baby knitwear set" onerror="this.remove()" />
+              <img class="shot" src="assets/baby-3.jpg" width="800" height="900" loading="lazy" alt="Baby vests and nappies in gentle colours" onerror="this.remove()" />
+            </div>
             <span class="scrim"></span>
+            <span class="shot-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></span>
             <span class="tag">Baby · 0–24 m</span>
             <span class="garment">
               <svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
@@ -1026,9 +1088,14 @@
         <article class="product reveal" data-tilt style="--d:.26s">
           <div class="product-visual" style="--c1:#4a3617;--c2:#161006">
             <span class="ribs"></span><span class="fold"></span><span class="shade"></span>
-            <img src="assets/cotton.jpg" width="800" height="900" loading="lazy" alt="Cotton fabric rolls stacked at the Liha Tex knitwear unit"
-                 onerror="this.onerror=null;this.src='assets/cotton.jpg'" />
+            <div class="shots" data-shots>
+              <img class="shot on" src="assets/cotton-1.jpg" width="800" height="900" loading="lazy" alt="Cotton fabric rolls stacked at the Liha Tex knitwear unit"
+                   onerror="this.onerror=null;this.src='assets/cotton.jpg'" />
+              <img class="shot" src="assets/cotton-2.jpg" width="800" height="900" loading="lazy" alt="Dyed cotton knit fabric bundles" onerror="this.remove()" />
+              <img class="shot" src="assets/cotton-3.jpg" width="800" height="900" loading="lazy" alt="Fabric rolls in the Liha Tex godown" onerror="this.remove()" />
+            </div>
             <span class="scrim"></span>
+            <span class="shot-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></span>
             <span class="tag">Wholesale</span>
             <span class="garment">
               <svg viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
@@ -1775,6 +1842,7 @@
     document.documentElement.classList.add('no-webgl');
   }
 </script>
+<script src="js/gallery.js" defer></script>
 <script src="js/liha-api.js" defer></script>
 </body>
 </html>
