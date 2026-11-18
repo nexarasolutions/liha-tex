@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="lt">
+  <title id="lt">Liha Tex</title>
+  <defs>
+    <linearGradient id="navy" x1="0" y1="0" x2=".9" y2="1">
+      <stop offset="0" stop-color="#17406f"/>
+      <stop offset=".42" stop-color="#0b2549"/>
+      <stop offset=".72" stop-color="#06182f"/>
+      <stop offset="1" stop-color="#030c18"/>
+    </linearGradient>
+    <linearGradient id="silk" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a5f96"/>
+      <stop offset=".5" stop-color="#123762"/>
+      <stop offset="1" stop-color="#061a33"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdf1c9"/>
+      <stop offset=".3" stop-color="#edcd85"/>
+      <stop offset=".6" stop-color="#cfa452"/>
+      <stop offset="1" stop-color="#8d6a25"/>
+    </linearGradient>
+    <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8d6a25"/>
+      <stop offset=".5" stop-color="#f0d190"/>
+      <stop offset="1" stop-color="#8d6a25"/>
+    </linearGradient>
+  </defs>
+
+  <!-- gold hanger: hook + sweep -->
+  <path d="M298 44c8-16 30-24 44-12 15 13 10 38-8 44-10 3-19 0-24-6"
+        fill="none" stroke="url(#gold)" stroke-width="11" stroke-linecap="round"/>
+  <path d="M312 82c52 18 104 44 148 82"
+        fill="none" stroke="url(#gold)" stroke-width="6.5" stroke-linecap="round" opacity=".92"/>
+
+  <!-- wordmark -->
+  <g font-family="Georgia, 'Times New Roman', serif" font-size="152" fill="url(#navy)" letter-spacing="0">
+    <text x="42" y="212">L</text>
+    <text x="150" y="212">i</text>
+    <text x="200" y="212">h</text>
+    <text x="292" y="212">a</text>
+  </g>
+
+  <!-- silk ribbon wrapping the L -->
+  <path d="M78 74c-30 20-46 58-44 96 2 42 22 74 50 88 10 5 20 1 24-8 4-9-1-18-11-23-20-10-31-34-31-62 0-26 9-48 26-63 9-8 10-21 2-28-5-5-11-5-16 0Z"
+        fill="url(#silk)"/>
+  <path d="M78 74c-30 20-46 58-44 96 2 42 22 74 50 88"
+        fill="none" stroke="rgba(190,220,255,.35)" stroke-width="1.4"/>
+  <path d="M66 96c-14 18-20 42-18 66 2 26 12 48 28 62"
+        fill="none" stroke="rgba(140,185,235,.22)" stroke-width="1"/>
+  <path d="M84 66c10-14 24-24 40-28-18 14-30 32-34 52"
+        fill="url(#silk)" opacity=".9"/>
+
+  <!-- thread spool on the i -->
+  <g transform="translate(16 0)">
+    <rect x="133" y="90" width="34" height="7" rx="3.5" fill="url(#navy)"/>
+    <rect x="137" y="97" width="26" height="36" rx="4" fill="url(#navy)"/>
+    <g stroke="rgba(190,215,245,.5)" stroke-width="1">
+      <path d="M139 104h22M139 110h22M139 116h22M139 122h22M139 128h22"/>
+    </g>
+    <rect x="133" y="133" width="34" height="7" rx="3.5" fill="url(#navy)"/>
+  </g>
+
+  <!-- cotton boll in the a -->
+  <g transform="translate(330 168)">
+    <circle r="17" fill="#f6efdf"/>
+    <circle r="17" fill="none" stroke="rgba(180,190,205,.55)" stroke-width="1"/>
+    <circle cx="-7" cy="2" r="7.5" fill="#fdf9ef"/>
+    <circle cx="7" cy="2" r="7.5" fill="#f3ecdb"/>
+    <circle cx="0" cy="-6" r="7.5" fill="#faf4e7"/>
+    <path d="M0 15c-4 8-10 11-16 10 3-7 8-11 16-10Zm0 0c4 8 10 11 16 10-3-7-8-11-16-10ZM0 16c0 8-2 13-6 17-2-8 0-13 6-17Z"
+          fill="url(#navy)"/>
+  </g>
+
+  <!-- underline + TEX -->
+  <path d="M40 254h100" stroke="url(#goldLine)" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M270 254h100" stroke="url(#goldLine)" stroke-width="3.5" stroke-linecap="round"/>
+  <text x="205" y="266" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif"
+        font-size="37" letter-spacing="13" fill="url(#navy)">TEX</text>
+</svg>
